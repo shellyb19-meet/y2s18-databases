@@ -8,14 +8,12 @@ Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-article_list=[]
 
 def add_article(topic,name,rating):
 	article_ob= Knowledge(
 		topic=topic,
 		name=name,
 		rating=rating)
-	article_list.append(article_ob)
 	session.add(article_ob)
 	session.commit()
 
@@ -37,19 +35,56 @@ def query_article_by_topic(topic):
 #print(query_article_by_topic("art"))
 
 
-def query_article_by_rating():
-	rat=input("rating")
-	for i in article_list:
-		if(i.rating<int(rat)):
-			rates= session.query(Knowledge).filter_by(rating=rat).first()
+def query_article_by_rating(rat):
+	rates= session.query(Knowledge).filter(Knowledge.rating<rat).all()
 	return rates
-print(query_article_by_rating())
+#print(query_article_by_rating(10))
 
-def delete_article_by_topic():
-	pass
+def query_article_by_primary_key(idd):
+	ids=session.query(Knowledge).filter_by(article_id=idd).first()
+	return ids
+#print(query_article_by_primary_key(1))
+
+def delete_article_by_topic(topic):
+	session.query(Knowledge).filter_by(topic=topic).delete()
+	session.commit()
+#delete_article_by_topic("art")
+#print(query_all_articles())
+	
 
 def delete_all_articles():
-	pass
+	session.query(Knowledge).delete()
+	session.commit()
+#delete_all_articles()
+#print(query_all_articles())
 
-def edit_article_rating():
-	pass
+def edit_article_rating(name,update_rating):
+	article_ob=session.query(Knowledge).filter_by(name=name).first()
+	article_ob.rating=update_rating
+	session.commit()
+edit_article_rating("art",7)
+print(query_all_articles())
+
+def delete_article_by_rating(rat):
+	knowledge=query_article_by_rating(rat)
+	for i in knowledge:
+		session.query(Knowledge).filter_by(article_id=i.article_id).delete()
+	session.commit()
+#delete_article_by_rating(10)
+#print(query_all_articles())
+
+def top_2():
+	knowledge=query_all_articles()
+	top_rat=10
+	top=[0,0]
+	#while(top[0]==0):
+	for i in knowledge:
+		if(i.rating==top_rat):
+			top.append(i)
+	return top
+print("hey")
+#print(top_2())
+
+
+	
+
