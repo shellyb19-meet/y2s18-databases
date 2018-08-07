@@ -19,7 +19,7 @@ def add_article(topic,name,rating):
 
 add_article("black holes", "black hole", 9)
 add_article("art", "art", 10)
-add_article("climbing", "climbing", 9)
+add_article("climbing", "climbing", 10)
 
 
 def query_all_articles():
@@ -62,8 +62,8 @@ def edit_article_rating(name,update_rating):
 	article_ob=session.query(Knowledge).filter_by(name=name).first()
 	article_ob.rating=update_rating
 	session.commit()
-edit_article_rating("art",7)
-print(query_all_articles())
+#edit_article_rating("art",7)
+#print(query_all_articles())
 
 def delete_article_by_rating(rat):
 	knowledge=query_article_by_rating(rat)
@@ -71,20 +71,29 @@ def delete_article_by_rating(rat):
 		session.query(Knowledge).filter_by(article_id=i.article_id).delete()
 	session.commit()
 #delete_article_by_rating(10)
-#print(query_all_articles())
+print(query_all_articles())
 
 def top_2():
-	knowledge=query_all_articles()
 	top_rat=10
-	top=[0,0]
-	#while(top[0]==0):
-	for i in knowledge:
-		if(i.rating==top_rat):
-			top.append(i)
+	a=-1
+	top=[]
+	stop=True
+	knowledge=query_all_articles()
+	while(stop):
+		for i in knowledge:
+			if(i.rating==top_rat):
+				top.append(i)
+				a=a+1
+				if(a==1):
+					stop=False
+		top_rat=top_rat-1
 	return top
-print("hey")
+
 #print(top_2())
-
-
-	
+def edi_article_rating(name,update_rating):
+	article_ob=session.query(Knowledge).filter_by(name=name).first()
+	article_ob.rating=((update_rating+article_ob.rating)/2)
+	session.commit()
+edi_article_rating("art",6)
+print(query_all_articles())
 
